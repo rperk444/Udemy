@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="basics" doc:id="14ce3617-7661-47ba-8f98-0d5838734768" >
+		<http:listener doc:name="Listener" doc:id="1b3c5084-e89c-46d1-9ad2-42fb8c30f99b" config-ref="HTTP_Listener_config" path="/basic" allowedMethods="GET">
+			<http:response >
+				<http:body ><![CDATA[#[vars.requestResponse]]]></http:body>
+			</http:response>
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="87a859bc-9795-4bb8-9b97-10a6cc6cc05e" message='#["Start Logger " ++ flow.name]'/>
+		<set-payload value='#["Payload value"]' doc:name="Set Payload" doc:id="c9e65903-5106-403c-9a8e-ed1799eb0ac2" />
+		<set-variable value="#[{&#10;	'firstName': 'Kerry',&#10;	'lastName': ''&#10;}]" doc:name="set request parameters" doc:id="6cf123e2-f369-4541-a0bf-923192d61935" variableName="customerName"/>
+		<http:request method="GET" doc:name="Request" doc:id="9961ef58-024e-49d3-8551-15f7dd228ffb" config-ref="HTTP_Request_configuration" path="/queryParams" target="requestResponse">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	('firstName': vars.customerName.firstName) if (vars.customerName.firstName != null and vars.customerName.firstName != ''),
+	('lastName': vars.customerName.firstName) if (vars.customerName.lastName != null and vars.customerName.lastName != '')
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="77ce9ade-9384-49d9-8bcc-5830692ef1d6" message='#["Logger END " ++ flow.name]'/>
+	</flow>
+	<flow name="uriParams" doc:id="7167dd3b-d8d1-4e62-963f-303dc70f73d3" >
+		<http:listener doc:name="HTTP GET" doc:id="9195ac38-a225-42f9-a694-9b730d7d8301" config-ref="HTTP_Listener_config" path="/queryParams" allowedMethods="GET">
+			<repeatable-in-memory-stream />
+		</http:listener>
+		<logger level="INFO" doc:name="Log START" doc:id="851a4267-b407-4510-8678-3008fb0d94e2" message='#["Log START" ++ flow.name]'/>
+		<set-payload value="#[%dw 2.0&#10;&#10;output application/json&#10;---&#10;&#10;attributes.queryParams]" doc:name="Set Payload" doc:id="73237849-3219-4a87-ab06-d6d1ff59a635" />
+	</flow>
+</mule>

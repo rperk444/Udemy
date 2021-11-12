@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="51bb3f39-ff6f-4275-a246-a1b5c81527c4" doc:description="Initial test listener" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="test1Flow" doc:id="048ee7e6-0568-4f02-a5f1-eaffd6302b4b" >
+		<http:listener doc:name="Listener" doc:id="5aed09ae-e34c-433b-8a81-16079d9b756b" config-ref="HTTP_Listener_config" path="/test1/call" allowedMethods="GET">
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="39202f92-dfe5-478d-b753-6bd1c0eff8a7" message='"Listener called"'/>
+		<set-payload value='#["hello world set from payload"]' doc:name="Set Payload" doc:id="4238e834-9342-4421-b8ce-e738f5eae7b5" />
+	</flow>
+</mule>
